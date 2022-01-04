@@ -5,6 +5,7 @@ import { validationStatusEnum } from "../../pages/AboutUsPage/AboutUsPage";
 const InputField = ({
   formData,
   setFormData,
+  multiline,
   validators = () => {
     console.log("ello there");
   },
@@ -20,6 +21,9 @@ const InputField = ({
       newFormData[`${name}`]["validationStatus"] = validationStatusEnum.SUCCESS;
       setFormData(newFormData);
     } else {
+      const newFormData = { ...formData };
+      newFormData[`${name}`]["validationStatus"] = validationStatusEnum.NOT_VALIDATED;
+      setFormData(newFormData);
       setErrMsg(msg);
     }
   };
@@ -27,20 +31,23 @@ const InputField = ({
     <View style={styles.view}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={styles.input}
+        style={multiline ? styles.multiLineInput : styles.input}
         value={formData[`${name}`]["value"]}
         onChangeText={(text) => {
           setErrMsg("");
           const newFormData = { ...formData };
           newFormData[`${name}`]["value"] = text;
           setFormData(newFormData);
+          runValidators();
         }}
         placeholder={placeholder}
         onBlur={runValidators}
         keyboardType={name === "customerPhone" ? "numeric" : null}
         maxLength={name === "customerPhone" ? 10 : null}
+        multiline={multiline}
+        numberOfLines={multiline ? 5 : null}
       />
-      {errMsg ? <Text>{errMsg}</Text> : null}
+      {errMsg ? <Text style={styles.errTxt}>{errMsg}</Text> : null}
     </View>
   );
 };
@@ -52,18 +59,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
+    marginTop: 15,
     fontSize: 15,
     textAlign: "left",
-    // backgroundColor: "#000000",
     width: 300,
   },
   input: {
     height: 40,
     backgroundColor: "white",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#565656",
-    width: 300,
     borderRadius: 7,
+    width: 300,
+  },
+  multiLineInput: {
+    height: 70,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#565656",
+    borderRadius: 7,
+    width: 300,
+    justifyContent: "flex-start",
+  },
+  errTxt: {
+    color: "red",
   },
 });
 export default InputField;

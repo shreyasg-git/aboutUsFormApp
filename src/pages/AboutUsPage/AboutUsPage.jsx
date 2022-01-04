@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, TextInput } from "react-native";
+import { View, Text, Button, TextInput, StyleSheet, Pressable, Dimensions } from "react-native";
 import InputField from "../../components/InputField";
 const AboutUsPage = () => {
   return (
@@ -27,12 +27,41 @@ const EnquiryForm = () => {
   useEffect(() => {
     console.log(formData);
   });
-  const validateAndSubmit = () => {};
+  const validateAndSubmit = () => {
+    if (
+      formData.customerName.validationStatus === validationStatusEnum.SUCCESS &&
+      formData.customerPhone.validationStatus === validationStatusEnum.SUCCESS &&
+      formData.customerEmail.validationStatus === validationStatusEnum.SUCCESS &&
+      formData.customerMsg.validationStatus === validationStatusEnum.SUCCESS
+    ) {
+      console.log("juasbnduh");
+    } else {
+      console.log("Validation Incomplete");
+    }
+  };
   return (
-    <View>
-      <Text>Enquiry Form</Text>
+    <View
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        // backgroundColor: "#454545",
+        height: Dimensions.get("window").height - 60,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 30,
+          fontWeight: "bold",
+          letterSpacing: 0.25,
+          color: "black",
+        }}
+      >
+        Enquiry Form
+      </Text>
       <InputField
         name="customerName"
+        placeholder="Enter your name"
         label="Name: "
         formData={formData}
         setFormData={setFormData}
@@ -45,6 +74,7 @@ const EnquiryForm = () => {
       />
       <InputField
         name="customerPhone"
+        placeholder="Enter phone number"
         label="Phone : (10 digits only)"
         formData={formData}
         setFormData={setFormData}
@@ -57,13 +87,14 @@ const EnquiryForm = () => {
               return { validBool: false, msg: "Phone Number Not Valid" };
             }
           } else {
-            return { validBool: false, msg: "Phone Number Not Valid 2" };
+            return { validBool: false, msg: "Phone Number Not Valid" };
           }
         }}
       />
       <InputField
         name="customerEmail"
         label="Email: "
+        placeholder="Enter email"
         formData={formData}
         setFormData={setFormData}
         validators={() => {
@@ -79,17 +110,40 @@ const EnquiryForm = () => {
         label="Message: "
         formData={formData}
         setFormData={setFormData}
+        multiline={true}
+        placeholder="Type in your query..."
         validators={() => {
-          // const regExNumbersOnly = /^d{10}$/;
-          // if (formData.customerPhone.value.match(regExNumbersOnly)) {
-          //   return { validBool: false, msg: "Phone Number Not Valid" };
-          // }
+          if (formData.customerMsg.value.length === 0) {
+            return { validBool: false, msg: "plz enter Name" };
+          }
           return { validBool: true, msg: "success" };
         }}
       />
-      <Button name="submit" title="Submit" onPress={validateAndSubmit} setFormData={setFormData} />
+      <Pressable style={styles.submitBtn} onPress={validateAndSubmit}>
+        <Text style={styles.submitBtnTxt}>Submit</Text>
+      </Pressable>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  submitBtn: {
+    marginTop: 20,
+    width: 300,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "black",
+  },
+  submitBtnTxt: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
+});
 export default AboutUsPage;
