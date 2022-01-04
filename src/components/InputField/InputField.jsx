@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
+import { validationStatusEnum } from "../../pages/AboutUsPage/AboutUsPage";
 
 const InputField = ({
+  formData,
+  setFormData,
   validators = () => {
     console.log("ello there");
   },
@@ -9,22 +12,35 @@ const InputField = ({
   placeholder = "placeholder",
   label = "label",
 }) => {
-  const [fieldValue, setFieldValue] = useState("");
+  const [errMsg, setErrMsg] = useState("");
   const runValidators = () => {
-    validators();
+    const { validBool, msg } = validators();
+    if (validBool) {
+      const newFormData = { ...formData };
+      newFormData[`${name}`]["validationStatus"] = validationStatusEnum.SUCCESS;
+      setFormData(newFormData);
+    } else {
+      setErrMsg(msg);
+    }
   };
   return (
     <View style={styles.view}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
-        value={fieldValue}
+        value={formData[`${name}`]["value"]}
         onChangeText={(text) => {
-          setFieldValue(text);
+          setErrMsg("");
+          const newFormData = { ...formData };
+          newFormData[`${name}`]["value"] = text;
+          setFormData(newFormData);
         }}
         placeholder={placeholder}
         onBlur={runValidators}
+        keyboardType={name === "customerPhone" ? "numeric" : null}
+        maxLength={name === "customerPhone" ? 10 : null}
       />
+      {errMsg ? <Text>{errMsg}</Text> : null}
     </View>
   );
 };
