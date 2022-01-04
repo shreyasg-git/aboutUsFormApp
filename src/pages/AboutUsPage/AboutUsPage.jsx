@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { View, Text, Button, TextInput, StyleSheet, Pressable, Dimensions } from "react-native";
 import InputField from "../../components/InputField";
 const AboutUsPage = () => {
@@ -35,6 +36,29 @@ const EnquiryForm = () => {
       formData.customerMsg.validationStatus === validationStatusEnum.SUCCESS
     ) {
       console.log("juasbnduh");
+      // axios POST request
+      const options = {
+        url: "http://localhost:8080/sendmail",
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        data: {
+          customerName: formData.customerName.value,
+          customerEmail: formData.customerEmail.value,
+          customerPhone: formData.customerPhone.value,
+          customerMsg: formData.customerMsg.value,
+        },
+      };
+
+      axios(options)
+        .then((response) => {
+          console.log(response.msg);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
       console.log("Validation Incomplete");
     }
